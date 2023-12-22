@@ -16,10 +16,10 @@ BIN = ../bin/
 # on some systems line -archi386 may need to be removed
 
 # uncomment the following lines for gfortran compilation (on some Macs)
-#FTN = gfortran
-#FFLAGS = -O3 -Wuninitialized -fno-f2c -fno-automatic -fno-range-check -fno-backslash
-#CC = /usr/bin/gcc
-#CFLAGS = -c
+FTN = gfortran-mp-13
+FFLAGS = -O3 -Wuninitialized -fno-f2c -fno-automatic -fno-range-check -fno-backslash -fallow-argument-mismatch
+CC = /usr/bin/gcc
+CFLAGS = -c
 
 # uncomment the following lines for Intel ifort compilation
 #FTN = ifort
