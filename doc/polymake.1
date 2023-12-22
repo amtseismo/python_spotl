@@ -1,0 +1,140 @@
+.TH POLYMAKE 1 "November 17, 2011" "Local material \(em IGPP/SIO"
+.EQ
+delim $$
+.EN
+.SH NAME
+polymake \- makes polygon files from a specified set
+.SH SYNOPSIS
+.LP
+\fBpolymake\fP
+.SH DESCRIPTION
+.PP
+\fIPolymake\fP reads, from standard input, a file
+with names of polygons and a code to indicate if they
+are areas to be included or excluded from the loading calculation.
+The program writes, to standard output, a ``polygon file'' with
+coordinates, for use by \fInloadf\fP.
+If the input file contains names not in the standard set (see below),
+or if the include/exclude code is incorrect, the program writes
+a message to the error output but does not stop.
+.PP
+Each line of the input file must begin with a
+\f[CR]+\fP (for inclusion),
+\f[CR]-\fP (for inclusion), or
+\f[CR]#\fP (for a comment line),
+In non-comment lines this must be followed by a space, and then the name
+of the polygon.
+.PP
+If polygons overlap, the one or ones that are to be excluded
+take priority; this is is done in \fInloadf\fP.
+.PP
+The ``standard set'' of these has names that match various regional
+models:
+.TS
+center;
+n l lw(3.5i).
+1	\f[CR]osu.bering.2010\fP	T{
+Bering Sea
+T}
+2	\f[CR]osu.hawaii.2010\fP	T{
+Pacific Ocean around Hawaii
+T}
+3	\f[CR]sfbay\fP	T{
+San Francisco Bay
+T}
+4	\f[CR]osu.usawest.2010\fP	T{
+West coast of United States and British Columbia
+T}
+5	\f[CR]cortez\fP	T{
+Sea of Cortez/Gulf of California
+T}
+6	\f[CR]osu.gulfmex.2010\fP	T{
+Gulf of Mexico
+T}
+7	\f[CR]osu.hudson.2010\fP	T{
+Hudson Bay and surrounding waters
+T}
+8	\f[CR]osu.namereast.2010\fP	T{
+East coast of North America, Maryland to Labrador
+T}
+9	\f[CR]osu.patagonia.2010\fP	T{
+Patagonian shelf
+T}
+10	\f[CR]osu.amazon.2010\fP	T{
+Off the mouth of the Amazon
+T}
+11	\f[CR]osu.europeshelf.2008\fP	T{
+NW European shelf
+T}
+12	\f[CR]osu.mediterranean.2011\fP	T{
+Mediterranean and Black Seas
+T}
+13	\f[CR]osu.redsea.2010\fP	T{
+Red Sea
+T}
+14	\f[CR]osu.persian.2010\fP	T{
+Arabian Sae and Persian Gulf
+T}
+15	\f[CR]osu.bengal.2010\fP	T{
+Bay of Bengal
+T}
+16	\f[CR]osu.chinasea.2010\fP	T{
+East China Sea,
+South China Sea
+T}
+17	\f[CR]osu.northaustral.2009\fP	T{
+North of Australia, Indian Ocean to Tasman Sea
+T}
+18	\f[CR]osu.tasmania.2010\fP	T{
+Bass Strait and parts of the Tasman Sea and Great Australian Bight
+T}
+19	\f[CR]osu.okhotsk.2010\fP	T{
+Seas of Okhotsk and Japan, NE Pacific
+T}
+20	\f[CR]naoreg\fP	T{
+Sea of Japan area (used in GOTIC package)
+T}
+21	\f[CR]esr.aotim5.2004\fP	T{
+Arctic Ocean, and part of the North Atlantic
+T}
+22	e\f[CR]sr.cats.2008\fP	T{
+Southern Ocean and Anarctic waters
+T}
+.TE
+.SH EXAMPLE
+.PP
+The following uses the ``here document'' formulation available for
+shell scripts:
+.nf
+.na
+	\f[CR]polymake << EOF > tmp.poly
+	+ esr.aotim5.2004
+	- osu.hudson.2010
+	- osu.bering.2010
+	EOF\fP
+.fi
+.ad
+This will include all points inside the Arctic Ocean polygon, \fBexcept\fP
+those that also fall into the Bering Sea or Hudson polygons;
+so we would use this when running \fInloadf\fP on the Arctic Ocean model.
+To use the the Arctic Ocean model where it overlaps with the Hudson's
+Bay model, we would simply omit the line for the Hudson's Bay polygon
+in the above; and when running \fInloadf\fP on the Hudson's Bay model,
+would create a polygon with:
+.ne 8
+.nf
+.na
+	\f[CR]polymake << EOF > tmp.poly
+	- esr.aotim5.2004
+	+ osu.hudson.2010
+	EOF\fP
+.fi
+.ad
+to exclude the overlapping area.
+It might appear that there is no reason to include the polygon for a model
+(with a \f[CR]+\fP) since only that model will be used by \fInloadf\fP.
+However, since in some cases the ocean boundaries
+of the polygon and the model are not the same, always including the
+polygons makes sure that no cells are skipped.
+.SH AUTHOR
+D. C. Agnew

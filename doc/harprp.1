@@ -1,0 +1,55 @@
+.TH HARPRP 1 "July 23, 1999" "Local material \(em IGPP/SIO"
+.EQ
+delim $$
+.EN
+.SH NAME
+harprp \- extracts individual results from a tidal load file
+.SH SYNOPSIS
+.LP
+\fBharprp o | g | p | z | v\fP
+.LP
+\fBharprp d | l | | s | t \fP  azimuth
+.SH DESCRIPTION
+.PP
+\fIHarprp\fP reads from standard input, a load file (or set of them),
+selects the numbers associated with a particular quantity,
+and writes out a file of harmonic constants suitable for tidal
+prediction by \fIhartid\fP.
+The designators (on the command line) are:
+.IP \fBo\fP
+ocean-tide height; units are meters.
+In this case only, the ``load file'' is assumed to have only one entry
+(per constituent), that being for the ocean tide; such a file is produced
+by \fIoclook\fP.
+.IP \fBg\fP
+gravity; units are \(*mgal, positive for decreasing $g$.
+.IP \fBp\fP
+potential height, relative to the surface of the Earth;
+units are millimeters, positive for up.
+.IP \fBz\fP
+vertical displacement; units are millimeters, positive for up.
+.IP \fBd\fP
+horizontal displacement at azimuth \fIazimuth\fP (given in degrees,
+clockwise from North);
+units are millimeters.
+.IP \fBl\fP
+extensional strain at azimuth \fIazimuth\fP (given in degrees); units are
+nanostrain.
+.IP \fBv\fP
+volume strain (for Poisson's ratio 0.25); units are
+nanostrain.
+.IP \fBs\fP
+shear strain at azimuth \fIazimuth\fP (given in degrees); units are
+nanostrain (tensor strain).
+.IP \fBt\fP
+tilt at azimuth \fIazimuth\fP (given in degrees); units are nanoradians.
+.PP
+The first two lines of the output file indicate that the phases are local,
+and give the longitude of the station.
+The subsequent lines give the Cartwright-Tayler version of the Doodson code
+for the tidal constituent, and the amplitude and phase.
+The final line gives an impossible Cartwright-Tayler code, to indicate EOF.
+.SH SEE ALSO
+\fIhartid\fP
+.SH AUTHOR
+D. C. Agnew

@@ -1,0 +1,10 @@
+This directory contains the documentation.
+
+spotlman.pdf	is the file for the overall description of the package,
+		including the file formats and the ocean models used.
+
+manpages.pdf	is a file that contains all the "man pages" for the 
+		individual programs, which include examples and more
+		descriptions of the details. The source files for these
+		man pages are also included so that they can be made
+		available for online use by the Unix  man  command.

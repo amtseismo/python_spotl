@@ -1,0 +1,125 @@
+.TH ERTID 1 "March, 1987" "Local material \(em IGPP/SIO"
+.EQ
+delim $$
+.EN
+.SH NAME
+ertid \- compute body tides on an elastic Earth, or Munk-Cartwright coefficients
+.SH DESCRIPTION
+.PP
+\fIErtid\fR generates the theoretical earth tides on an elastic Earth
+(the ``body tides'')
+or the Munk-Cartwright coefficients which describe the different
+spherical harmonics of the tidal potential.
+(For a fuller description of these,
+see Munk and Cartwright [1966]).
+The tides are computed
+directly, by finding the positions of the Moon and Sun
+at each time and computing the resulting earth-tide
+at a given location.
+.PP
+After asking for the start time, end time, and sample interval
+(the times are given [in Greenwich time] as year, day-number, and hour),
+the program asks whether theoretical tides or Munk-Cartwright coefficients 
+are wanted.
+In the first case,
+up to one gravity tide, two tilt tides, and three strain tides
+may be generated for a particular location.
+(As a special feature, if the number of gravity tides is \-1,
+the potential height on a rigid Earth is generated instead
+of the gravity tide).
+The station coordinates needed for this option
+are given in degrees and decimals, and should be geographic
+(they are converted to geocentric internally to provide a partial
+correction for ellipticity).
+In the second case,
+Munk-Cartwright coefficients of order 2 or 3 (or both),
+and species 0 through 2 (or 3) may be computed and written out,
+the series for each coefficient to a separate file,
+with real and imaginary parts alternating.
+All outputs (except for some diagnostic messages)
+are to ASCII files.
+Each data series is written to a separate file,
+the filenames being read in one to a line.
+The data are written out to the file with a 5(g13.5) format.
+.PP
+Because the solar and lunar positions are calculated anew for
+each time, the  run time goes as the number of
+points computed.
+.SH UNITS
+.PP
+The units and sign conventions are:
+for potential height, meters and positive up;
+for gravity, \(*mgals (10$"" sup -8 $ m s$"" sup -2$)
+and positive for a decrease in g;
+for tilt, nanoradians and positive for motion of the plumb bob
+in the azimuth given
+(or a downwards ground tilt in that direction);
+for strain, nanostrain and positive for extension.
+.SH THEORY
+.PP
+The computation procedure roughly follows that given
+by Munk and Cartwright (1966):
+at each time point the positions of the Sun and Moon
+are found
+(more precisely,
+the latitude and longitude of the sublunar
+and subsolar points, and the ratio of true to mean distance);
+from these, the tides at the place of observation can
+be found directly.
+Munk and Cartwright give the derivation for the potential
+only;
+the extension to gravity, tilt, and strain is contained
+in Appendix C of Berger (1969).
+The two main sources of error
+are the imprecision of the solar and lunar ephemerides,
+and the neglect of the Earth's ellipticity and rotation.
+The ephemerides used are those of Harrison (1971) for the Moon,
+with a simple theory for the Sun.
+The tides computed by this program have been checked
+against those gotten from a very
+complete ephemeris by Cartwright and Taylor (1971)
+and Cartwright and Edden (1973);
+the level of disagreement was less than $10 sup -3$, which will be
+important only for the most precise
+observations of tidal gravity.
+The program assumes a spherical Earth, with second and third-degree
+parts of the potential only being taken into account.
+.PP
+It should be noted that this program computes,
+not the full Earth tide, but that tide
+less the amount contributed by the permanent deformation
+(and potential) contributed 
+by the Sun and Moon.
+For gravity this quantity is known as the Honkasalo correction.
+The program, in computing this quantity,
+assumes that the elastic-Earth Love numbers apply.
+(These are the degree-two
+numbers, $h sub 2$ = 0.6114, $k sub 2$ = 0.304 and $l sub 2$ = 0.0832.)
+.SH REFERENCES
+.LP
+Berger, J. (1969)
+A Laser Earth Strain Meter,
+Ph.D. Thesis, University of California, San Diego
+.LP
+Cartwright, D. E., and R. J. Tayler (1971).
+New computations of the tide-generating potential,
+\fIGeophys. J. Roy. Astron. Soc.\fP, \fB23\fP, 45-73.
+.LP
+Cartwright, D. E., and A. C. Edden (1973).
+Corrected tables of tidal harmonics,
+\fIGeophys. J. Roy. Astron. Soc.\fP, \fB33\fP, 253-264.
+.LP
+Harrison, J. C. (1971).
+New computer programs for the calculation of Earth tides,
+Internal Report, Cooperative Institute for Research in
+Environmental Sciences, University of Colorado.
+.LP
+Munk, W. H., and D. E. Cartwright (1966),
+Tidal Spectroscopy and Prediction,
+\fIPhil. Trans. Roy. Soc., Ser. A., \fB259\fR, 533-581.
+.\" .LP
+.\" Wahr, J. (1981).
+.\" Body tides on an elliptical, rotating, elastic and oceanless Earth,
+.\" \fIGeophys. J. Roy. Astron. Soc.\fP, \fB64\fP, 677-703.
+.SH AUTHORS
+J. Berger, W. Farrell, J. C. Harrison, J. Levine, D. C. Agnew

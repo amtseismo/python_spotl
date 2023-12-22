@@ -1,0 +1,132 @@
+.TH OCLOOK 1 "9 January 1996" "Local material \(em IGPP/SIO"
+.de bx
+\(br\|\\$1\|\(br\l'|0\(rn'\l'|0\(ul'
+..
+.SH NAME
+oclook \- provides information from an ocean-tide file
+.SH SYNOPSIS
+\fBoclook\fP modelfile lat long \fBd | o\fP [polyfile]
+.sp
+\fBoclook\fP modelfile slat nlat wlong elong \fBg\fP [polyfile]
+.sp
+\fBoclook\fP modelfile slat nlat wlong elong \fBr | i | a | p\fP [polyfile]
+.SH DESCRIPTION
+.PP
+\fIOclook\fP is writes to the standard output information about
+what the ocean-tide value is for a given ocean-tide file, whose name is
+given on the command line as \fImodelfile\fP.
+A file which excludes or includes regions through predefined polygons
+may also be included, as the last argument.
+.PP
+If a single position is given (as north latitude and east longitude), the
+output may be in one of two forms:
+.IP \fBd\fP
+In this case the program writes out complete information about the
+tidal data for this location. The first line of output looks like
+(for the M2 Schwiderski model, at 33\(deN, 120\(deW):
+.br
+.nf
+.na
+.sp .5
+\ \ \ \ \ Cell indices are   241   57 (  20761) with fractional locations  \-.500  .500
+.fi
+.ad
+.sp .5
+which gives the cell of the model, indexed both
+as a matrix (by column and row), and as a 1-d vector.
+The ``fractional location'' is the coordinates within the cell, relative
+to the center, with the cell dimensions being 1 by 1.
+The next lines give the tidal amplitudes in several forms:
+.br
+.sp .5
+.nf
+.na
+\ \ \ \ \ Cell amps (R&I,[amp&ph]) are     \-.3800     .2350
+\ \ \ \ \ \ [     .4468  148.2665 ]
+\ \ \ \ \ Fine-grid (interpolated) amps (R&I,[amp&ph]) are     \-.3973     .2105
+\ \ \ \ \ \ [     .4496  152.0813 ]
+.fi
+.ad
+.sp .5
+where the first of each pair of lines gives the real and imaginary
+part, and the second the amplitude (in meters) and Greenwich phase.
+\fBNOTE\fP that in this, alone amongst these programs, the phase is
+.bx \fBpositive\fP
+for a lag, thus corresponding to the phase convention usually
+used for ocean tides: this is thus, in the usual notation, \fIG\fP.
+The amplitude is given first for the value in the cell, and secondly
+for the result of bilinear interpolation to the point given.
+.IP \fBo\fP
+In this case the program writes out information in the style of a
+``load file'' produced by \fInloadf\fP, but with the only ``load''
+being the tidal height in meters; for the example given above this
+line of output would be
+.br
+.sp .5
+.nf
+.na
+\ \ \ \ \ \o              .4496 \-152.0813
+.fi
+.ad
+.sp .5
+Note that the phase is now given in the other convention (lags negative),
+and that this is the interpolated value.
+.PP
+If a range of latitudes and longitudes are given the program lists
+parameters related to the cells which fall within the specified
+range.
+The options are:
+.IP \fBg\fP
+Write to standard output the coordinates of the corners of the cells
+(ordered as longitude and latitude),
+with each set of corner coordinates (five in all) separated by a
+geographically impossible value.
+When plotted, these values will thus draw the grid of cells.
+This output is quite lengthy and should be sent to a file.
+.IP \fBr\fP
+Write to standard output the coordinates of the centers of the cells,
+each with the real value of the tide (in meters) for that point.
+.IP \fBi\fP
+Write to standard output the coordinates of the centers of the cells,
+each with the imaginary value of the tide for that point
+(in meters, Greenwich phase, lag \fBpositive\fP).
+.IP \fBa\fP
+Write to standard output the coordinates of the centers of the cells,
+each with the amplitude of the tide (in meters) for that point.
+.IP \fBp\fP
+Write to standard output the coordinates of the centers of the cells,
+each with the phase of the tide for that point
+(in degrees, Greenwich phase, lag \fBpositive\fP).
+.PP
+For example, running the program with option \fBp\fP, and the range
+being from 32\(deN to 34\(deN, \-122\(deE to \-120\(deE, for the
+Schwiderski M2 model, gives:
+.sp
+.nf
+.na
+\ \ \ \ \ \ \-121.5000   33.5000   165.141 
+\ \ \ \ \ \ \-121.5000   32.5000   159.497
+\ \ \ \ \ \ \-121.5000   31.5000   153.919
+\ \ \ \ \ \ \-120.5000   33.5000   159.507
+\ \ \ \ \ \ \-120.5000   32.5000   150.027
+\ \ \ \ \ \ \-120.5000   31.5000   149.477
+\ \ \ \ \ \ \-119.5000   33.5000   151.013
+\ \ \ \ \ \ \-119.5000   32.5000   148.267
+\ \ \ \ \ \ \-119.5000   31.5000   142.160
+.fi
+.ad
+.sp
+The next to last line gives the phase shown for the \fBd\fP option above.
+.PP
+The next two lines show the commands used to generate the model grids
+shown in Figures 1a and 1b of the supplementary documentation.
+.nf
+.na
+.sp
+\fBoclook m2.csr3tr 20 32 \-117 \-105 g
+.sp
+oclook m2.cortez 20 32 \-117 \-105 g\fP
+.fi
+.ad
+.SH AUTHOR
+D. C. Agnew

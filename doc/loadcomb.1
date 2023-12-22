@@ -1,0 +1,89 @@
+.TH LOADCOMB 1 "21 February, 1996" "Local material \(em IGPP/SIO"
+.SH NAME
+loadcomb \- combines and scales load tide files
+.SH SYNOPSIS
+\fBloadcomb c\fP [scale (amp) scale (phase)] [rotation]
+.sp
+\fBloadcomb b\fP [rotation]
+.sp
+\fBloadcomb t\fP [scale (amp) scale (phase)] [rotation]
+.sp
+\fBloadcomb r\fP [scale (amp) scale (phase)] [rotation]
+.SH DESCRIPTION
+.PP
+\fILoadcomb\fP performs operations on load-tide files
+(as written by \fInloadf\fP and concatenated), read from the standard
+input, and writes the results to the standard output.
+The options are:
+.IP \fBc\fP
+takes two load files, concatenated together with the \fIcat\fP
+command, and adds the load values in them.
+The header lines from each file are included in the output, except that
+the ``station'' line is taken to be that from the first file.
+If two numerical arguments are given on the command line, they
+are taken to be the amplitude and phase of a (complex) scaling
+factor that is applied to the loads in the \fBsecond\fP file before doing the
+addition.
+If a single numerical argument is present, it is taken to be the amount
+by which the reference frame is rotated from the ``standard'' one;
+this is equivalent to giving the direction
+(clockwise from East) along which the loads are to be given.
+An argument of 0 would thus give the loads in the original system;
+for one of 90 [degrees] (for example) the displacements would be given,
+in order, as South, West, and Up.
+If three numerical arguments are given, they are taken to be the
+scaling (applied to the second file) followed by a rotation
+(applied to the sum).
+If a rotation or scaling is performed, additional ``header lines'' (with initial
+letter R) are written to the load file to indicate this.
+.IP \fBr\fP
+takes a single load file and applies the scaling (and/or rotation)
+as specified for the previous option; additional header lines are added.
+.IP \fBb\fP
+using the first two lines of the load file, gets the station
+location and tidal constituent, and from these computes the body tides
+at this location, assuming a spherical Earth with Love numbers
+\fIh\fP = 0.6114,
+\fIk\fP = 0.3040,
+and \fIl\fP = 0.0832, and the Cartwright-Tayler constituent amplitudes.
+The file output includes a ``model'' line which indicates that the tides
+given are the body tides.
+The results may be given rotated to be
+along any azimuth, as with the previous two cases; a header
+line is added to show this.
+.IP \fBt\fP
+operates as with the \fIb\fP option, except that the load tides
+read in are added to the body tides to give the total tides.
+The load tide may be scaled, or the sum
+may be rotated, as with the previous cases; header
+lines are added to show this.
+.SH EXAMPLES
+.sp
+\fBcat \fPloadfile1 loadfile2\fB loadcomb c\fP
+.sp
+\fBcat \fPloadfile1 loadfile2\fB | loadcomb c\fP 1.3 \-10
+.sp
+\fBcat \fPloadfile1\fB | loadcomb b\fP
+.sp
+\fBcat \fPloadfile1\fB | loadcomb t\fP 45
+.sp
+\fBcat \fPloadfile1\fB | loadcomb r\fP 45
+.sp
+\fBcat \fPloadfile1\fB | loadcomb r\fP 10 \-5
+.PP
+The first line shows the most usual use: adding the results already
+computed in the two loadfiles.
+The second line shows the same, with the loads in the second loadfile
+being scaled by 1.3 in amplitude and shifted by \-10\(de in phase.
+The third line will produce the body tides at the location given by
+loadfile1; the fourth line, the total (body and load) tides at the
+same location, in a reference frame rotated by 45\(de (so the 1-axis
+points SE).
+The fifth line will rotate the loads by 45\(de; the
+sixth line will scale the loads by a factor of 10, with a \-5\(de phase
+shift.
+.SH SEE ALSO
+\fIharprp(1)\fP, which may be used to compute the strains and tilts at
+a particular azimuth.
+.SH AUTHOR
+D. C. Agnew

@@ -1,0 +1,133 @@
+.TH HARTID 1 "April 1987 (rev Feb 2005)" "Local material \(em IGPP/SIO"
+.de bx
+\(br\|\\$1\|\(br\l'|0\(rn'\l'|0\(ul'
+..
+.EQ
+delim $$
+.EN
+.SH NAME
+hartid \- predicts tides from harmonic constants
+.SH SYNOPSIS
+\fBhartid\fP year [day-of-year | month day] hr min sec nterms samp
+.SH DESCRIPTION
+.PP
+Given the ``harmonic constants'' for a tidal series,
+\fIhartid\fP computes the predicted tides for a specified time.
+The harmonic constants (in the format specified below) are
+read in from the standard input, and the predicted tides written
+to the standard output.
+The computation (described in more detail below) infers the value of
+small constituents from those of larger ones, so only a few are needed
+to give a good result.
+The arguments on the command line are:
+.IP year\0day\0hr\0min\0sec
+The time of the first output value, in Greenwich time (UTC);
+the date may be given either as day of the year, or as
+month and day (Gregorian calendar).
+There are no explicit restrictions on the range of
+admissable dates, but the relevant formulae for the
+fundamental tidal arguments will be increasingly inaccurate before 1700.
+.IP nterms
+The number of values to be written out
+.IP samp
+The sample interval, in seconds.
+.SH HARMONIC CONSTANTS
+.PP
+The harmonic constants are often prepared by \fIharprp\fP.
+The format of this file is:
+.IP 1.
+The first line should contain either the letter ``l'' if the phases
+will be given relative to the local potential (as with the $kappa$
+of traditional tidal analysis) or a ``g'' if the phases
+will be given relative to the Greenwich potential (as with the $G$
+of traditional tidal analysis).
+\fBNOTE,\fP however, that phases are to be given with lags regarded as
+.bx \fBnegative\fP;
+this is the reverse of the traditional usage.
+.IP 2.
+If the first line contains an ``l'', the second should contain the
+East longitude in degrees of the locality;
+for Greenwich phases this entry is omitted.
+.IP 3.
+The following lines (starting with the third for local phase,
+the second for Greenwich phase)
+contain the specification of the tidal constituent
+(its Cartwright code\(emsee below),
+followed by the amplitude (in whatever units are appropriate)
+and phase (of whatever type, in degrees).
+These lines are read with a formatted read statement,
+the format being (6i2,2f9.0).
+The first character of each line is therefore a blank
+(since the first number is always a single-digit integer).
+The only exception is the last line, which should simply contain a
+``\-1'' at the beginning;
+this signals the end-of-list to the program.
+A typical (though short) file might look like:
+.RS
+.sp
+.nf
+.na
+\f[CR]l
+\-116.455
+\ 1\-1\ 0\ 0\ 0\ 0\ 7.41000\ \-78.0
+\ 1\ 1\ 0\ 0\ 0\ 0\ 11.7900\ \-94.0
+\ 2\ 0\ 0\ 0\ 0\ 0\ 16.0600\ \-287.0
+\ 2\ 2\-2\ 0\ 0\ 0\ 5.01000\ \-282.0
+\-1\fP
+.fi
+.ad
+.RE
+.PP
+The program expects to be provided with at least one harmonic
+constant for both the diurnal and semidiurnal bands.
+Long-period tides (excluding semiannual and longer periods)
+will be included if any harmonic constants are provided for
+long-period tides;
+similarly, if the constants are given for $roman M sub 3$,
+terdiurnal tides will be predicted.
+.SH THEORY
+In computing a series,
+\fIhartid\fP
+uses a larger number of tidal constituents than are input;
+the amplitudes of these additional constituents are found
+by spline interpolation of the admittance
+(the ratio of the potential amplitude to that observed,
+or in this case found from the loading computation).
+This automatically allows
+for the various nodal modulations.
+The fits are different for each species; note that if there
+are 3 or fewer harmonics for a species, a piecewise straight-line fit is used.
+A total of 79 long-period, 154 diurnal, and 109 semidiurnal
+constituents are used in the prediction (but no overtides).
+This corresponds to a cutoff
+0.076% of the largest long-period tide ($roman M sub f$),
+0.013% of the largest diurnal tide ($roman K sub 1$), and
+0.008% of the largest semidiurnal tide ($roman M sub 2$).
+The rms accuracy should be about this, but at some times
+smaller missing constituents could combine to give a larger error.
+It should be noted that a number of the
+constituents are in fact nodal ``satellites'' to larger ones.
+Also, the long-period constituents include the nodal tide,
+which can produce an apparent nonzero mean
+if any long-period tides are specified.
+.SH
+TIDAL CODES
+.PP
+The Cartwright codes and Darwin symbols for the largest tides are:
+.sp
+.nf
+.na
+0\ 2\ 0\ 0\ 0\ 0\ $roman M sub f$	0\ 1\ 0\-1\ 0\ 0\ $roman M sub m$
+.sp
+1\ 1\ 0\ 0\ 0\ 0\ $roman K sub 1$	1\-1\ 0\ 0\ 0\ 0\ $roman O sub 1$	1\ 1\-2\ 0\ 0\ 0\ $roman P sub 1$	1\-2\ 0\ 1\ 0\ 0\ $roman Q sub 1$	1\ 2\ 0\-1\ 0\ 0\ $roman J sub 1$	1\ 0\ 0\ 1\ 0\ 0\ $roman M sub 1$
+1\-2\ 2\-1\ 0\ 0\ $rho sub 1$	1\ 3\ 0\ 0\ 0\ 0\ $roman OO sub 1$	1\-3\ 0\ 2\ 0\ 0\ $2 roman Q sub 1$
+.sp
+2\ 0\ 0\ 0\ 0\ 0\ $roman M sub 2$	2\ 2\-2\ 0\ 0\ 0\ $roman S sub 2$	2\-1\ 0\ 1\ 0\ 0\ $roman N sub 2$	2\ 2\ 0\ 0\ 0\ 0\ $roman K sub 2$	2\-1\ 2\-1\ 0\ 0\ $nu sub 2$	2\-2\ 2\ 0\ 0\ 0\ $mu sub 2$
+2\ 1\ 0\-1\ 0\ 0\ $roman L sub 2$	2\ 2\-3\ 0\ 0\ 1\ $roman T sub 2$	2\-2\-0\ 2\ 0\ 0\ $2 roman N sub 2$	2\-3\ 2\ 1\ 0\ 0\ $epsilon sub 2$	2\ 3\ 0\-1\ 0\ 0\ $nu sub 2$
+.\" .sp
+.\" 3\ 0\ 0\ 0\ 0\ 0\ $roman M sub 3$
+.sp
+.fi
+.ad
+.SH AUTHOR
+D. C. Agnew

@@ -1,0 +1,183 @@
+.TH NLOADF 1 "July 23, 1999" "Local material \(em IGPP/SIO"
+.de bx
+\(br\|\\$1\|\(br\l'|0\(rn'\l'|0\(ul'
+..
+.EQ
+delim $$
+.EN
+.SH NAME
+nloadf \- compute ocean loads at a site, or give the grid used to do so
+.SH SYNOPSIS
+\fBnloadf\fP stname lat long ht modelfile greenfile \fBg\ |\ l\fP [polyfile [+\ |\ \-] ]
+.sp
+\fBnloadf\fP stname lat long ht modelfile greenfile \fBm\fP [dist] [polyfile [+\ |\ \-] ]
+.SH DESCRIPTION
+.PP
+\fINloadf\fP is a program for computing ocean tidal loads at a location,
+given (1) a model of the ocean tides specified on a latitude-longitude
+grid; (2) a Green function for the response of the earth (which
+also includes the information about the intervals of
+integration); (3) a file specifying the distribution of land and sea; and
+(4) a ``polygon file'', which specifies what regions are and are not to
+be included in the convolution.
+Items (1-3) are required, the first two being given on the command line
+and the third being hardwired into the program.
+Item (4) is optional, and when present is specified on the command line.
+.PP
+The arguments on the command line are (with R for required, O for optional):
+.IP \fIstname\fP 8
+(R) an ascii string givening the station name; it must
+not contain any blanks or be longer than 80 characters.
+.IP \fIlat\fP
+(R) the North latitude (in decimal degrees) of the station.
+.IP \fIlong\fP
+(R) the East longitude (in decimal degrees) of the station.
+.IP \fIht\fP
+(R) the elevation (in meters above or below sea level) of the station.
+.IP \fImodelfile\fP
+(R) the name
+of a file specifying the tidal height for a global of regional
+model of a particular tidal constituent, in ``standard form''.
+(See the supplementary documentation for a fuller description).
+.IP \fIgreenfile\fP
+(R) the name
+of a file specifying the Green function for a particular Earth model,
+along with the distance range(s) and step size(s) to be used in the
+convolution, and whether or not the land-sea file is to be used to
+determine if ocean is present or not.
+(See the supplementary documentation for a fuller description).
+.IP \fBg\fP,\0\fBl\fP,\0\fBm\fP
+(R) determines the nature of the output.
+If \fBg\fP or \fBl\fP, the loading
+results are written to standard output.
+A \fBg\fP means that the phases
+are Greenwich phase, \fBBUT with lags
+.bx negative\fP
+(the reverse
+of the usual phase convention in ocean tides).
+An \fBl\fP
+means that the
+the phases
+are in local phase at the site, again with lags negative.
+An \fBm\fP
+causes the program to write to standard output
+the coordinates of the
+corners of the cells used for the convolution, in a form
+(lat and long separated by impossible values) that is often suitable for
+plotting. This output is quite voluminous and should always be redirected to a file.
+.IP \fIdist\fP
+(O) If the \fBm\fP option is chosen, this is the maximum distance
+(in degrees) to which to cell coordinates will be given.
+.IP \fIpolyfile\fP
+(O) The name of a ``polygon file'' which specifies regions
+into which points must (and/or must not) fall in order to be included in
+the convolution.
+By setting such files up correctly, it is easy to assure that a convolution
+done with a global model does not include a marginal sea for which a 
+separate model is being used (and that the model of the marginal sea
+has no overlap with the global model).
+If a + or \- is included following the name of this file, it overrides
+the instructions in that file for which polygons to include: if a + is
+given, all polygons in the file are included; if a \-, all are excluded.
+(See the supplementary documentation for a fuller description).
+.SH OUTPUT
+.LP
+The program writes the results of its computations to standard output,
+along with a set of ``header lines'' which describe what went into the
+computation.
+These header lines are usually more voluminous than the results; experience
+has shown that it is easy to lose track of how a computation is done,
+so that it is worthwhile to make the results self-documenting.
+Both result and header lines are identified by a letter in the first column,
+lowercase for the result lines.
+The ones currently output are:
+.IP S
+The station name and coordinates; format (3x,a40,3x,2f10.4,f10.0).
+.IP O
+The tidal model: the Darwin symbol, Doodson number (in Cartwright-Tayler
+form), and a description of the model; format (2x,a4,5x,6i2,5x,a50).
+.IP G
+The Green function. The first line describes the Earth model used;
+subsequent lines describe what radial spacing was used, and whether
+the detailed land-sea model, or the ocean model, was used to determine
+the land-sea boundary.
+.IP P
+If a polygon file is used, the first line gives the description (from the
+polygon file) of what the file contains;
+subsequent lines show what polygons were included or excluded
+(that is, what areas within them were included or excluded).
+.IP C
+This code gives information about the convolution. One line gives
+the time at which the computation was done; a second indicates how
+far away, and where, the closest nonzero load was found; and a third
+summarizes information on how many cells (if any) 
+were found to be ocean from the land-sea
+model but had an amplitude of
+zero from the ocean model, even after trying to interpolate from cells
+nearby.
+.IP L
+Describes the phase convention.
+.IP X
+A terminator line (used by \fIloadcomb\fP)
+to indicate the end of the header lines.
+.IP g
+The gravity load tide, amplitude and phase (as are all the loads), with
+the amplitude in microgal; format (10x,2f10.4).
+The convention is that positive accelerations are upwards; that is,
+they correspond to a decrease in the local acceleration of gravity.
+.IP p
+The induced potential load tides
+(actually, potential height), amplitude and phase, with
+the amplitude in millimeters; format (10x,2f10.4).
+The convention is that positive values correspond to
+upward motion of the equipotential surface.
+Note that this is potential height relative to the Earth's
+surface, not in a fixed reference frame: this is the
+potential which enters into the tide-generating equations.
+.IP d
+The displacement load tides, alternating amplitude and phase, with
+the amplitude in millimeters; format (10x,6f10.4).
+The displacements are given in order east, north, and up; note that
+the displacements given by some other programs (and used in the MERIT
+and successor standards) are south, west, and up, as well as having
+lags positive.
+.IP t
+The tilt load tides, alternating amplitude and phase, with
+the amplitude in nanoradians; format (10x,4f10.4).
+The tilts are given in order east and north, with positive tilt being
+that a plumb line would move in the direction given.
+.IP s
+The strain load tides, alternating amplitude and phase, with
+the amplitude in nanostrain; format (10x,6f10.4).
+The strains are given in order east extension, north extension, and
+tensor shear ($ e sub EN$).
+.SH EXAMPLES
+\fBnloadf MDO1 30.6805 255.9849 2095 m2.csr3tr green.gbav.std l
+.sp
+nloadf HAYS 42.617 \-71.483 0 m2.bfund green.gbav.std l poly.bfund +
+.sp
+nloadf HAYS 42.617 \-71.483 0 m2.csr3tr green.gbav.std l poly.bfund \-
+.sp
+nloadf PFO 33.609 \-116.455 1280 m2.csr3tr green.gbav.std m 20 poly.cortez \-
+.sp
+nloadf PFO 33.609 \-116.455 1280 m2.cortez green.gbav.std m 20 poly.cortez +\fP 
+.sp
+.LP
+The first example shows the simplest (and usual) case where the convolution
+is done for a single tidal model.
+The next two lines show how a marginal sea (in this case the Gulf of
+Maine and Bay fo Fundy) would be included.
+On the second line the convolution is done for a model for this sea,
+with a polygon file being used to exclude any overlap with the global
+model;
+on the third a global model is used, with the polygon file set to
+exclude any overlap with the model for this sea.
+To get the final results, the outputs would have to be redirected to
+separate files and then added with \fIloadcom\fP.
+The fourth and fifth lines
+output the load-cell grids for a similar case; these are the
+lines used to produce the grids in Figures 1c and 1d of the manual.
+.SH SEE ALSO
+\fIloadcomb\fP
+.SH AUTHOR
+D. C. Agnew

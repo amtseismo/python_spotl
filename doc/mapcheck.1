@@ -1,0 +1,53 @@
+.TH MAPCHECK 1 "March 20, 1996" "Local material \(em IGPP/SIO"
+.SH NAME
+mapcheck \- examine fine-scale land-sea database
+.SH SYNOPSIS
+\fBmapcheck r\fP lat long dist
+.sp
+\fBmapcheck h\fP lat long
+.sp
+\fBmapcheck o\fP lat long
+.sp
+.SH DESCRIPTION
+.PP
+The program \fBmapcheck\fP is designed to
+read from the fine-scale land-sea data files to allow the user
+to examine what these files give in the vicinity of a particular
+point;
+potentially important, since
+this is used to determine the distribution of the tide
+close to a station for the loading computation.
+The files (\fIlndsea.bit\fP and \fIlndsea.ind\fP)
+must be present in the directory in which the program is being run.
+The program has three options, all of which require that station
+coordinates (latitude and longitude) be included on the command lines.
+The options are:
+.IP \fBr\fP
+Write to standard output a rough ``printer-plot''
+of the land and sea distribution within a distance \fIdist\fP of the
+station; \fIdist\fP should be in kilometers.
+In this plot, - means land.
+.IP \fBr\fP
+Write to standard output a ``printer-plot''
+of a 1\(de by 1\(de area to
+show the local structure of the land-sea file.
+The lower left corner of the area will be at the integer
+latitude and longitude closest to the values given on the
+command line.
+The file has a resolution of 1/64\(de and what is shown is a plot
+with 64 by 64 points; each point in the file thus corresponds to 1 ``pixel''
+of the database.
+.IP \fBo\fP
+The program writes out the distance to the nearest ocean
+from the point specified on the command line.
+.SH DATA FILES
+.PP
+The data files provide a binary representation of
+the land-sea distribution of the
+entire world, based on the version created from the World Vector
+Shoreline for Version 3 of the GMT
+mapping tools.
+See the supplementary documentation to the loading programs for more
+details.
+.SH AUTHOR
+D. C. Agnew
