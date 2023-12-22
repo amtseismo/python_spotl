@@ -1,0 +1,5 @@
+ls *.gz | sed 's/.asc.gz//' |\
+awk '{printf"gzcat %s.asc.gz | ../../bin/modcon f %s\nmv %s ../.\n",$0,$0,$0}' > tmp$$
+# on some systems the line above may need to be changed to use  zcat  
+sh tmp$$
+rm tmp$$
